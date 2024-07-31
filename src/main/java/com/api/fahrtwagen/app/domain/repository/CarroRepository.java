@@ -9,5 +9,8 @@ import com.api.fahrtwagen.app.domain.model.Carro;
 
 @Repository
 public interface CarroRepository extends JpaRepository<Carro, Long>{
+
     Page<Carro> findAll(Pageable paginacao);
+
+    Boolean existsByPlacaIgnoreCase(String placa);
 }

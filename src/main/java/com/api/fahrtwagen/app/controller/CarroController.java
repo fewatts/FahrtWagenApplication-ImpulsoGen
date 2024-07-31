@@ -1,5 +1,7 @@
 package com.api.fahrtwagen.app.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +23,7 @@ import com.api.fahrtwagen.app.domain.dtos.dtocarro.DadosCadastroCarro;
 import com.api.fahrtwagen.app.domain.dtos.dtocarro.DadosDetalhamentoCarro;
 import com.api.fahrtwagen.app.domain.model.Carro;
 import com.api.fahrtwagen.app.domain.repository.CarroRepository;
-import com.api.fahrtwagen.app.domain.validacao.validacaocarro.ValidarAnoCarro;
+import com.api.fahrtwagen.app.domain.validacao.validacaocarro.ValidadorCarros;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -34,11 +36,11 @@ public class CarroController {
     private CarroRepository carroRepository;
 
     @Autowired
-    private ValidarAnoCarro validarAnoCarro;
+    private List<ValidadorCarros> validadores;
 
     @GetMapping
     public ResponseEntity<Page<DadosDetalhamentoCarro>> listar(
-            @PageableDefault(size = 10, sort = { "modelo" }, direction = Sort.Direction.ASC) Pageable paginacao) {
+            @PageableDefault(size = 10, sort = { "marca" }, direction = Sort.Direction.ASC) Pageable paginacao) {
         var page = carroRepository.findAll(paginacao).map(DadosDetalhamentoCarro::new);
         return ResponseEntity.ok(page);
     }
@@ -53,7 +55,7 @@ public class CarroController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoCarro> cadastrar(@RequestBody @Valid DadosCadastroCarro dados,
             UriComponentsBuilder uriBuilder) {
-        validarAnoCarro.validar(dados);
+        validadores.forEach(v -> v.validar(dados));
         var carro = new Carro(dados);
         carroRepository.save(carro);
         var uri = uriBuilder.path("/carros/{id}").buildAndExpand(carro.getIdCarro()).toUri();
@@ -64,7 +66,7 @@ public class CarroController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoCarro> atualizar(@PathVariable Long id,
             @RequestBody @Valid DadosCadastroCarro dados) {
-        validarAnoCarro.validar(dados);
+        validadores.forEach(v -> v.validar(dados));
         var carro = carroRepository.getReferenceById(id);
         carro.atualizar(dados);
         return ResponseEntity.ok().body(new DadosDetalhamentoCarro(carro));

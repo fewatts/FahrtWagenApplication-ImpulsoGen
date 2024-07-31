@@ -8,8 +8,9 @@ import com.api.fahrtwagen.app.domain.dtos.dtocarro.DadosCadastroCarro;
 import com.api.fahrtwagen.app.domain.validacao.ValidacaoException;
 
 @Component
-public class ValidarAnoCarro {
+public class ValidarAnoCarro implements ValidadorCarros{
     
+    @Override
     public void validar(DadosCadastroCarro dados){
         int anoAtual = Year.now().getValue();
         if (dados.ano() > anoAtual) {
