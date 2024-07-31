@@ -1,6 +1,5 @@
 package com.api.fahrtwagen.app.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +21,7 @@ import com.api.fahrtwagen.app.domain.dtos.dtocarro.DadosCadastroCarro;
 import com.api.fahrtwagen.app.domain.dtos.dtocarro.DadosDetalhamentoCarro;
 import com.api.fahrtwagen.app.domain.model.Carro;
 import com.api.fahrtwagen.app.domain.repository.CarroRepository;
+import com.api.fahrtwagen.app.domain.validacao.validacaocarro.ValidarAnoCarro;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -32,6 +32,9 @@ public class CarroController {
 
     @Autowired
     private CarroRepository carroRepository;
+
+    @Autowired
+    private ValidarAnoCarro validarAnoCarro;
 
     @GetMapping
     public ResponseEntity<Page<DadosDetalhamentoCarro>> listar(
@@ -50,9 +53,10 @@ public class CarroController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoCarro> cadastrar(@RequestBody @Valid DadosCadastroCarro dados,
             UriComponentsBuilder uriBuilder) {
+        validarAnoCarro.validar(dados);
         var carro = new Carro(dados);
         carroRepository.save(carro);
-        var uri = uriBuilder.path("/cursos/{id}").buildAndExpand(carro.getIdCarro()).toUri();
+        var uri = uriBuilder.path("/carros/{id}").buildAndExpand(carro.getIdCarro()).toUri();
         return ResponseEntity.created(uri).body(new DadosDetalhamentoCarro(carro));
     }
 
@@ -60,6 +64,7 @@ public class CarroController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoCarro> atualizar(@PathVariable Long id,
             @RequestBody @Valid DadosCadastroCarro dados) {
+        validarAnoCarro.validar(dados);
         var carro = carroRepository.getReferenceById(id);
         carro.atualizar(dados);
         return ResponseEntity.ok().body(new DadosDetalhamentoCarro(carro));
@@ -67,7 +72,7 @@ public class CarroController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<HttpStatus> deletarCurso(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deletar(@PathVariable Long id) {
         var carro = carroRepository.getReferenceById(id);
         carro.excluir();
         return ResponseEntity.noContent().build();

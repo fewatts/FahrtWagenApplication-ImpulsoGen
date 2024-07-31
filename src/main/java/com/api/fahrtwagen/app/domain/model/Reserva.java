@@ -57,7 +57,6 @@ public class Reserva {
         this.dataInicio = dados.dataInicio();
         this.dataFim = dados.dataFim();
         this.valor = calcularValorReserva(dados.dataInicio(), dados.dataFim(), carro.getValor());
-        this.confirmada = dados.confirmada();
     }
 
     public void atualizar(DadosCadastroReserva dados, Carro carro, Cliente cliente) {
@@ -72,9 +71,6 @@ public class Reserva {
         }
         if (dados.dataFim() != null) {
             this.dataFim = dados.dataFim();
-        }
-        if (dados.confirmada() != null) {
-            this.confirmada = dados.confirmada();
         }
         this.valor = calcularValorReserva(this.dataInicio, this.dataFim, carro.getValor());
     }

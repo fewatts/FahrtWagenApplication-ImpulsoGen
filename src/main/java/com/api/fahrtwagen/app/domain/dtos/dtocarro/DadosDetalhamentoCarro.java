@@ -10,7 +10,6 @@ public record DadosDetalhamentoCarro(
     String placa, 
     Double valor,
     Boolean manutencaoEmDia, 
-    Boolean disponivel, 
     Boolean ativo
 ) {
 
@@ -22,8 +21,7 @@ public record DadosDetalhamentoCarro(
             carro.getAno(), 
             carro.getPlaca(), 
             carro.getValor(),
-            carro.getManutencaoEmDia(), 
-            carro.getDisponivel(), 
+            carro.getManutencaoEmDia(),
             carro.getAtivo()
         );
     }

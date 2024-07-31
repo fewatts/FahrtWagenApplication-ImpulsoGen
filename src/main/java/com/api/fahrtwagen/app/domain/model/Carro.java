@@ -42,8 +42,6 @@ public class Carro {
     @Column(name = "manutencao_em_dia")
     private Boolean manutencaoEmDia;
 
-    private Boolean disponivel;
-
     private Boolean ativo = true;
 
     public Carro(DadosCadastroCarro dados) {
@@ -53,7 +51,6 @@ public class Carro {
         this.placa = dados.placa();
         this.valor = dados.valor();
         this.manutencaoEmDia = dados.manutencaoEmDia();
-        this.disponivel = dados.disponivel();
         this.ativo = dados.ativo();
     }
 
@@ -76,15 +73,12 @@ public class Carro {
         if (dados.manutencaoEmDia() != null) {
             this.manutencaoEmDia = dados.manutencaoEmDia();
         }
-        if (dados.disponivel() != null) {
-            this.disponivel = dados.disponivel();
-        }
         if (dados.ativo() != null) {
             this.ativo = dados.ativo();
         }
     }
 
     public void excluir() {
-       this.ativo = false;
+        this.ativo = false;
     }
 }

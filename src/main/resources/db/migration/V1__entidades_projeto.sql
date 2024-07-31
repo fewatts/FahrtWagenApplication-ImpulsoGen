@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS Carros (
     placa VARCHAR(10) UNIQUE NOT NULL,
     valor DECIMAL(10, 2),
     manutencao_em_dia BOOLEAN NOT NULL,
-    disponivel BOOLEAN NOT NULL,
     ativo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
@@ -25,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Reservas (
     data_inicio DATE NOT NULL,
     data_fim DATE NOT NULL,
     valor DECIMAL(10, 2),
-    confirmada BOOLEAN NOT NULL,
+    confirmada BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (carro_id) REFERENCES Carros(id_carro),
     FOREIGN KEY (cliente_id) REFERENCES Clientes(id_cliente)
 );
