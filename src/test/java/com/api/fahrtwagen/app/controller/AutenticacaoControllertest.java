@@ -62,7 +62,7 @@ public class AutenticacaoControllertest {
         when(tokenService.gerarToken(usuarioMock)).thenReturn(tokenJWTMock);
 
         var result = mvc.perform(
-                post("/auth")
+                post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(DadosAutenticacaoJt.write(dadosAutenticacao).getJson()))
                 .andExpect(status().isOk())
@@ -81,7 +81,7 @@ public class AutenticacaoControllertest {
         when(manager.authenticate(any()))
                 .thenThrow(new BadCredentialsException("Credenciais inválidas"));
 
-        mvc.perform(post("/auth")
+        mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(DadosAutenticacaoJt.write(dadosAutenticacao).getJson()))
                 .andExpect(status().isUnauthorized());

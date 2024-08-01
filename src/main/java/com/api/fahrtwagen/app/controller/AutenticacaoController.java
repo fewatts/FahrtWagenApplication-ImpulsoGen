@@ -17,8 +17,8 @@ import com.api.fahrtwagen.app.infra.security.TokenService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("auth")
-public class AuthController {
+@RequestMapping("login")
+public class AutenticacaoController {
 
     @Autowired
     private TokenService tokenService;
@@ -27,7 +27,7 @@ public class AuthController {
     private AuthenticationManager manager;
 
     @PostMapping
-    public ResponseEntity<DadosTokenJWT> auth(@RequestBody @Valid DadosAutenticacao dados) {
+    public ResponseEntity<DadosTokenJWT> login(@RequestBody @Valid DadosAutenticacao dados) {
         var autenticacaoToken = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
         var authentication = manager.authenticate(autenticacaoToken);
         var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());

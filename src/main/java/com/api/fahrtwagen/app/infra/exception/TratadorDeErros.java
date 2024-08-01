@@ -1,7 +1,5 @@
 package com.api.fahrtwagen.app.infra.exception;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -18,60 +16,43 @@ import com.api.fahrtwagen.app.domain.validacao.ValidacaoException;
 
 import jakarta.persistence.EntityNotFoundException;
 
-
 @RestControllerAdvice
 public class TratadorDeErros {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<HttpStatus> tratarErro404(){
+    public ResponseEntity<HttpStatus> tratarErro404() {
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> tratarErroDeArgumento(MethodArgumentTypeMismatchException ex){
+    public ResponseEntity<String> tratarErroDeArgumento(MethodArgumentTypeMismatchException ex) {
         return ResponseEntity.badRequest().body("Argumento incorreto: " + ex);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> tratarErro400(HttpMessageNotReadableException ex){
+    public ResponseEntity<String> tratarErro400(HttpMessageNotReadableException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     @ExceptionHandler(ValidacaoException.class)
-    public ResponseEntity<String> tratarErroRegraDeNegocio(ValidacaoException ex){
+    public ResponseEntity<String> tratarErroRegraDeNegocio(ValidacaoException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     // @ExceptionHandler(Exception.class)
     // public ResponseEntity<String> tratarErro500(Exception ex){
-    //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    // return
+    // ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     // }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> tratarErro500(Exception ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        
-        Throwable cause = ex.getCause();
-        if (cause != null) {
-            response.put("cause", cause.toString());
-        } else {
-            response.put("cause", "Unknown cause");
-        }
-        
-        response.put("stackTrace", ex.getStackTrace());
-        
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Stream<Object>> tratarErro400(MethodArgumentNotValidException ex){
+    public ResponseEntity<Stream<Object>> tratarErro400(MethodArgumentNotValidException ex) {
         var erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new));
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<HttpStatus> tratarErroElementoNaoEncontrado(NoSuchElementException ex){
+    public ResponseEntity<HttpStatus> tratarErroElementoNaoEncontrado(NoSuchElementException ex) {
         return ResponseEntity.notFound().build();
     }
 
@@ -79,9 +60,4 @@ public class TratadorDeErros {
     public ResponseEntity<String> tratarErro401(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
-
-    // @ExceptionHandler(StackOverflowError.class)
-    // public ResponseEntity<?> tratarErroStackOverFlow(StackOverflowError ex){
-    //     return ResponseEntity.internalServerError().body(ex.getCause());
-    // }
 }
