@@ -1,4 +1,4 @@
-package com.api.fahrtwagen.app.infra;
+package com.api.fahrtwagen.app.infra.exception;
 
 import org.springframework.validation.FieldError;
 

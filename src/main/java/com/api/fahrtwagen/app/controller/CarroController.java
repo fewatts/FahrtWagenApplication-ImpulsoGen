@@ -25,11 +25,13 @@ import com.api.fahrtwagen.app.domain.model.Carro;
 import com.api.fahrtwagen.app.domain.repository.CarroRepository;
 import com.api.fahrtwagen.app.domain.validacao.validacaocarro.ValidadorCarros;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("carros")
+@SecurityRequirement(name = "bearer-key")
 public class CarroController {
 
     @Autowired

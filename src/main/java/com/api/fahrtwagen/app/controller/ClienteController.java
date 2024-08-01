@@ -22,11 +22,13 @@ import com.api.fahrtwagen.app.domain.dtos.dtocliente.DadosDetalhamentoCliente;
 import com.api.fahrtwagen.app.domain.model.Cliente;
 import com.api.fahrtwagen.app.domain.repository.ClienteRepository;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("clientes")
+@SecurityRequirement(name = "bearer-key")
 public class ClienteController {
 
     @Autowired

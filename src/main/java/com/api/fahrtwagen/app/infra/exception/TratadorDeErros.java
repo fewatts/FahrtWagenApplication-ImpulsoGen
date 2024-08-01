@@ -1,11 +1,14 @@
-package com.api.fahrtwagen.app.infra;
+package com.api.fahrtwagen.app.infra.exception;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,9 +42,26 @@ public class TratadorDeErros {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<String> tratarErro500(Exception ex){
+    //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    // }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> tratarErro500(Exception ex){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    public ResponseEntity<Map<String, Object>> tratarErro500(Exception ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        
+        Throwable cause = ex.getCause();
+        if (cause != null) {
+            response.put("cause", cause.toString());
+        } else {
+            response.put("cause", "Unknown cause");
+        }
+        
+        response.put("stackTrace", ex.getStackTrace());
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,8 +75,13 @@ public class TratadorDeErros {
         return ResponseEntity.notFound().build();
     }
 
-    // @ExceptionHandler(BadCredentialsException.class)
-    // public ResponseEntity<String> tratarErro401(BadCredentialsException ex) {
-    //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<String> tratarErro401(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
+    // @ExceptionHandler(StackOverflowError.class)
+    // public ResponseEntity<?> tratarErroStackOverFlow(StackOverflowError ex){
+    //     return ResponseEntity.internalServerError().body(ex.getCause());
     // }
 }

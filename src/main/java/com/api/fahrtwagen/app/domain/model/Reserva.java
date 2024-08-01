@@ -6,6 +6,7 @@ import com.api.fahrtwagen.app.domain.dtos.dtoreserva.DadosCadastroReserva;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,12 +33,12 @@ public class Reserva {
     @Column(name = "id_reserva")
     private Long idReserva;
 
-    @ManyToOne
-    @JoinColumn(name = "carro_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "carro_id")
     private Carro carro;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
     @Column(name = "data_inicio", nullable = false)

@@ -22,11 +22,13 @@ import com.api.fahrtwagen.app.domain.dtos.dtoreserva.DadosDetalhamentoReserva;
 import com.api.fahrtwagen.app.domain.repository.ReservaRepository;
 import com.api.fahrtwagen.app.domain.service.ReservaService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("reservas")
+@SecurityRequirement(name = "bearer-key")
 public class ReservaController {
 
     @Autowired
