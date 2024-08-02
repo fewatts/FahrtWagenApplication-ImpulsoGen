@@ -9,6 +9,6 @@ public record DadosCadastroUsuario(
 
         @Email @NotBlank String email,
 
-        @Pattern(regexp = "^(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "A senha deve ter no mínimo 6 caracteres, incluindo pelo menos uma letra maiúscula e um caractere especial.")
+        @Pattern(regexp = "^(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "A senha deve ter no mínimo 6 caracteres, incluindo pelo menos uma letra maiúscula e um caractere especial. A senha não pode ter sequências de números e deve variar os tipos de caracteres ao longo de seu comprimento.")
         String senha
 ) {}
