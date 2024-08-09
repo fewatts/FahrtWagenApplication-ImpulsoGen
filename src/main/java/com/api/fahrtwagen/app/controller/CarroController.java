@@ -24,6 +24,7 @@ import com.api.fahrtwagen.app.domain.dtos.dtocarro.DadosDetalhamentoCarro;
 import com.api.fahrtwagen.app.domain.model.Carro;
 import com.api.fahrtwagen.app.domain.repository.CarroRepository;
 import com.api.fahrtwagen.app.domain.validacao.validacaocarro.ValidadorCarros;
+import com.api.fahrtwagen.app.domain.validacao.validacaocarro.ValidarAnoCarro;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -39,6 +40,9 @@ public class CarroController {
 
     @Autowired
     private List<ValidadorCarros> validadores;
+
+    @Autowired
+    private ValidarAnoCarro validarAno;
 
     @GetMapping
     public ResponseEntity<Page<DadosDetalhamentoCarro>> listar(
@@ -68,7 +72,7 @@ public class CarroController {
     @Transactional
     public ResponseEntity<DadosDetalhamentoCarro> atualizar(@PathVariable Long id,
             @RequestBody @Valid DadosCadastroCarro dados) {
-        validadores.forEach(v -> v.validar(dados));
+        validarAno.validar(dados);
         var carro = carroRepository.getReferenceById(id);
         carro.atualizar(dados);
         return ResponseEntity.ok().body(new DadosDetalhamentoCarro(carro));
