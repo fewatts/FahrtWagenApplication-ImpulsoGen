@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.api.fahrtwagen.app.domain.dtos.dtoreserva.DadosCadastroReserva;
 import com.api.fahrtwagen.app.domain.repository.CarroRepository;
