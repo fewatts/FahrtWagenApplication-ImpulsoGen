@@ -11,6 +11,9 @@ import com.api.fahrtwagen.app.domain.repository.CarroRepository;
 import com.api.fahrtwagen.app.domain.repository.ClienteRepository;
 import com.api.fahrtwagen.app.domain.repository.ReservaRepository;
 import com.api.fahrtwagen.app.domain.validacao.validacaoreserva.ValidadorReservas;
+import com.api.fahrtwagen.app.domain.validacao.validacaoreserva.ValidarCarroAtivo;
+import com.api.fahrtwagen.app.domain.validacao.validacaoreserva.ValidarCarroDisponivelPut;
+import com.api.fahrtwagen.app.domain.validacao.validacaoreserva.ValidarDataReserva;
 
 @Service
 public class ReservaService {
@@ -23,6 +26,15 @@ public class ReservaService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private ValidarCarroDisponivelPut validardor1;
+
+    @Autowired
+    private ValidarCarroAtivo validardor2;
+
+    @Autowired
+    private ValidarDataReserva validardor3;
 
     @Autowired
     private List<ValidadorReservas> validadores;
@@ -41,7 +53,9 @@ public class ReservaService {
     }
 
     public Reserva atualizar(Long id, DadosCadastroReserva dados) {
-        validadores.forEach(v -> v.validar(dados));
+        validardor1.validar(dados, id);
+        validardor2.validar(dados);
+        validardor3.validar(dados);
         var reserva = reservaRepository.getReferenceById(id);
         reserva.setConfirmada(true);
         var carro = carroRepository.getReferenceById(dados.carro());
