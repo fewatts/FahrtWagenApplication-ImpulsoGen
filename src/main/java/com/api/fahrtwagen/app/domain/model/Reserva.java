@@ -77,7 +77,7 @@ public class Reserva {
     }
 
     private Double calcularValorReserva(LocalDate dataInicio, LocalDate dataFim, Double valor) {
-        long dias = dataFim.toEpochDay() - dataInicio.toEpochDay();
+        long dias = (dataFim.toEpochDay() - dataInicio.toEpochDay()) + 1;
         return valor * dias;
     }
 }
