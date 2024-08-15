@@ -12,7 +12,7 @@ import com.api.fahrtwagen.app.domain.repository.ReservaRepository;
 import com.api.fahrtwagen.app.domain.validacao.ValidacaoException;
 
 @Component
-public class ValidarCarroDisponivelPut {
+public class ValidarCarroDisponivelAtualizacao {
         
     @Autowired
     private CarroRepository carroRepository;
