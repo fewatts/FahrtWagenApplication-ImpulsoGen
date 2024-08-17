@@ -15,6 +15,31 @@ import com.api.fahrtwagen.app.domain.model.Reserva;
 public interface ReservaRepository extends JpaRepository<Reserva, Long>{
     Page<Reserva> findAll(Pageable paginacao);
 
-    @Query(value = "SELECT * FROM reservas WHERE carro_id = :carroId", nativeQuery = true)
-    List<Reserva> findByCarroId(@Param("carroId") Long carroId);
+    @Query(value = """
+            SELECT 
+                * 
+            FROM 
+                reservas 
+            WHERE 
+                carro_id = :carroId
+            ORDER BY 
+                data_inicio
+            """, nativeQuery = true)
+    List<Reserva> findByCarroIdOrderByDataInicio(@Param("carroId") Long carroId);
+
+    @Query(value = """
+            SELECT 
+                * 
+            FROM 
+                reservas 
+            WHERE 
+                carro_id = :carroId
+            AND
+                id_reserva != :reservaId
+            ORDER BY 
+                data_inicio
+            """, nativeQuery = true)
+    List<Reserva> findByCarroIdOrderByDataInicioIgnoreReservaId(@Param("carroId") Long carroId, @Param("reservaId") Long reservaId);
+
+
 }

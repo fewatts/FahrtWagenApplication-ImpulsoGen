@@ -2,47 +2,65 @@ package com.api.fahrtwagen.app.domain.validacao.validacaoreserva;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.api.fahrtwagen.app.domain.dtos.dtoreserva.DadosCadastroReserva;
-import com.api.fahrtwagen.app.domain.repository.CarroRepository;
+import com.api.fahrtwagen.app.domain.model.Reserva;
 import com.api.fahrtwagen.app.domain.repository.ReservaRepository;
 import com.api.fahrtwagen.app.domain.validacao.ValidacaoException;
 
 @Component
-public class ValidarCarroDisponivelAtualizacao {
-        
-    @Autowired
-    private CarroRepository carroRepository;
+public class ValidarCarroDisponivelAtualizacao extends ValidacaoReservaBase {
 
     @Autowired
     private ReservaRepository reservaRepository;
 
     public void validar(DadosCadastroReserva dados, Long id) {
-        var carro = carroRepository.getReferenceById(dados.carro());
-        var dataInicioNovaReserva = dados.dataInicio();
-        var dataFimNovaReserva = dados.dataFim();
+        var mesLimite = 6;
+        var datasDisponiveis = acharDatasDisponiveis(id, dados.carro(), LocalDate.now(),
+                LocalDate.now().plusMonths(mesLimite));
 
-        var reservas = reservaRepository.findByCarroId(carro.getIdCarro());
+        if (!isPeriodoDisponivel(datasDisponiveis, dados.dataInicio(), dados.dataFim())) {
+            var periodosConcatenados = new StringBuilder();
+            var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            var periodos = agruparPeriodos(datasDisponiveis, formatter);
 
-        var dataIndisponivel = reservas.stream()
-                .filter(reserva -> !reserva.getIdReserva().equals(id))
-                .filter(reserva -> dataInicioNovaReserva.isBefore(reserva.getDataFim())
-                        && dataFimNovaReserva.isAfter(reserva.getDataInicio()))
-                .map(reserva -> reserva.getDataFim())
-                .max(LocalDate::compareTo)
-                .orElse(null);
+            for (int i = 0; i < periodos.size(); i++) {
+                periodosConcatenados.append(i + 1).append(": ").append(periodos.get(i));
+                if (i < periodos.size() - 1) {
+                    periodosConcatenados.append(", ");
+                }
+            }
 
-        if (dataIndisponivel != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             throw new ValidacaoException(
-                    String.format("O carro: 'ID: %d, Modelo: %s' não se encontra disponível nas datas solicitadas. " +
-                            "O carro estará disponível a partir de: %s",
-                            carro.getIdCarro(),
-                            carro.getModelo(),
-                            dataIndisponivel.plusDays(1).format(formatter)));
+                    "O período solicitado não está disponível. Períodos disponíveis em até "
+                            + mesLimite + " meses: "
+                            + periodosConcatenados.toString());
         }
+    }
+
+    private List<LocalDate> acharDatasDisponiveis(Long reserva, Long carro, LocalDate startDate, LocalDate endDate) {
+        var reservas = reservaRepository.findByCarroIdOrderByDataInicioIgnoreReservaId(carro, reserva);
+        List<LocalDate> availableDates = new ArrayList<>();
+
+        for (var i = 0; i < reservas.size() - 1; i++) {
+            var currentReserva = reservas.get(i);
+            var nextReserva = reservas.get(i + 1);
+            var currentEndDate = currentReserva.getDataFim().plusDays(1);
+            var nextStartDate = nextReserva.getDataInicio().minusDays(1);
+
+            availableDates.addAll(acharPeriodosDeDatas(currentEndDate, nextStartDate));
+        }
+
+        Reserva lastReserva = reservas.get(reservas.size() - 1);
+        if (lastReserva.getDataFim().isBefore(endDate)) {
+            availableDates.addAll(acharPeriodosDeDatas(lastReserva.getDataFim().plusDays(1), endDate));
+        }
+
+        return availableDates;
     }
 }
