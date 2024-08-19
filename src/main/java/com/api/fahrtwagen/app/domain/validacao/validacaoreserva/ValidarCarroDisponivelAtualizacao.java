@@ -13,7 +13,7 @@ public class ValidarCarroDisponivelAtualizacao extends ValidacaoReservaBase {
 
     public void validar(DadosCadastroReserva dados, Long id) {
         var mesLimite = 6;
-        var datasDisponiveis = acharDatasDisponiveis(dados.carro(), LocalDate.now(),
+        var datasDisponiveis = acharDatasDisponiveis(dados.carro(), LocalDate.now().minusMonths(3),
                 LocalDate.now().plusMonths(mesLimite), id);
 
         if (datasDisponiveis.isEmpty())
@@ -34,7 +34,8 @@ public class ValidarCarroDisponivelAtualizacao extends ValidacaoReservaBase {
             throw new ValidacaoException(
                     "O período solicitado não está disponível. Períodos disponíveis em até "
                             + mesLimite + " meses: "
-                            + periodosConcatenados.toString());
+                            + periodosConcatenados.toString()
+            );
         }
     }
 }

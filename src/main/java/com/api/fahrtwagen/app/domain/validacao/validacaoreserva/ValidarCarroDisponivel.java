@@ -35,7 +35,8 @@ public class ValidarCarroDisponivel extends ValidacaoReservaBase implements Vali
                         throw new ValidacaoException(
                                         "O período solicitado não está disponível. Períodos disponíveis em até "
                                                         + mesLimite + " meses: "
-                                                        + periodosConcatenados.toString());
+                                                        + periodosConcatenados.toString()
+                        );
                 }
         }
 }
