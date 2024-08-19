@@ -2,27 +2,22 @@ package com.api.fahrtwagen.app.domain.validacao.validacaoreserva;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.api.fahrtwagen.app.domain.dtos.dtoreserva.DadosCadastroReserva;
-import com.api.fahrtwagen.app.domain.model.Reserva;
-import com.api.fahrtwagen.app.domain.repository.ReservaRepository;
 import com.api.fahrtwagen.app.domain.validacao.ValidacaoException;
 
 @Component
 public class ValidarCarroDisponivelAtualizacao extends ValidacaoReservaBase {
 
-    @Autowired
-    private ReservaRepository reservaRepository;
-
     public void validar(DadosCadastroReserva dados, Long id) {
         var mesLimite = 6;
-        var datasDisponiveis = acharDatasDisponiveis(id, dados.carro(), LocalDate.now(),
-                LocalDate.now().plusMonths(mesLimite));
+        var datasDisponiveis = acharDatasDisponiveis(dados.carro(), LocalDate.now(),
+                LocalDate.now().plusMonths(mesLimite), id);
+
+        if (datasDisponiveis.isEmpty())
+            return;
 
         if (!isPeriodoDisponivel(datasDisponiveis, dados.dataInicio(), dados.dataFim())) {
             var periodosConcatenados = new StringBuilder();
@@ -41,26 +36,5 @@ public class ValidarCarroDisponivelAtualizacao extends ValidacaoReservaBase {
                             + mesLimite + " meses: "
                             + periodosConcatenados.toString());
         }
-    }
-
-    private List<LocalDate> acharDatasDisponiveis(Long reserva, Long carro, LocalDate startDate, LocalDate endDate) {
-        var reservas = reservaRepository.findByCarroIdOrderByDataInicioIgnoreReservaId(carro, reserva);
-        List<LocalDate> availableDates = new ArrayList<>();
-
-        for (var i = 0; i < reservas.size() - 1; i++) {
-            var currentReserva = reservas.get(i);
-            var nextReserva = reservas.get(i + 1);
-            var currentEndDate = currentReserva.getDataFim().plusDays(1);
-            var nextStartDate = nextReserva.getDataInicio().minusDays(1);
-
-            availableDates.addAll(acharPeriodosDeDatas(currentEndDate, nextStartDate));
-        }
-
-        Reserva lastReserva = reservas.get(reservas.size() - 1);
-        if (lastReserva.getDataFim().isBefore(endDate)) {
-            availableDates.addAll(acharPeriodosDeDatas(lastReserva.getDataFim().plusDays(1), endDate));
-        }
-
-        return availableDates;
     }
 }
