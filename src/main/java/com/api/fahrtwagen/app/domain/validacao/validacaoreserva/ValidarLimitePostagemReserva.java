@@ -2,9 +2,12 @@ package com.api.fahrtwagen.app.domain.validacao.validacaoreserva;
 
 import java.time.LocalDate;
 
+import org.springframework.stereotype.Component;
+
 import com.api.fahrtwagen.app.domain.dtos.dtoreserva.DadosCadastroReserva;
 import com.api.fahrtwagen.app.domain.validacao.ValidacaoException;
 
+@Component
 public class ValidarLimitePostagemReserva implements ValidadorReservas{
 
     @Override
