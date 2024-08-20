@@ -14,7 +14,7 @@ public class ValidarCarroDisponivel extends ValidacaoReservaBase implements Vali
         @Override
         public void validar(DadosCadastroReserva dados) {
                 var mesLimite = 6;
-                var datasDisponiveis = acharDatasDisponiveis(dados.carro(), LocalDate.now(),
+                var datasDisponiveis = acharDatasDisponiveis(dados.carro(), LocalDate.now().minusMonths(mesLimite),
                                 LocalDate.now().plusMonths(mesLimite), null);
 
                 if (datasDisponiveis.isEmpty())

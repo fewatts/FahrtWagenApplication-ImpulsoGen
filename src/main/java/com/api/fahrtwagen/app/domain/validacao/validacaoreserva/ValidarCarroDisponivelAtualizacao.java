@@ -13,7 +13,7 @@ public class ValidarCarroDisponivelAtualizacao extends ValidacaoReservaBase {
 
     public void validar(DadosCadastroReserva dados, Long id) {
         var mesLimite = 6;
-        var datasDisponiveis = acharDatasDisponiveis(dados.carro(), LocalDate.now().minusMonths(3),
+        var datasDisponiveis = acharDatasDisponiveis(dados.carro(), LocalDate.now().minusMonths(mesLimite),
                 LocalDate.now().plusMonths(mesLimite), id);
 
         if (datasDisponiveis.isEmpty())
